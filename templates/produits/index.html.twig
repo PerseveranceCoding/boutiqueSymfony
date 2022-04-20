@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Produits index{% endblock %}
+
+{% block body %}
+    
+    <div class="container">
+        <h1 class="mb-5 text-center">Produits</h1>
+  	  <div class="row">
+         {% for produit in produits %}
+  	    <div class="card col-md-4">
+          <a href="{{ path('app_produits_show', {'id': produit.id}) }}">
+           <img class="card-img-top" src="{{ produit.imageName ? vich_uploader_asset(produit) : 
+           asset('public/images/products/placeholder.jpg') | imagine_filter('lataille_medium')}}" alt="Card image cap"></a>
+  	      <div class="card-body">
+  	        <h5 class="card-title">{{ produit.titre }}</h5>
+  	        <p class="card-text">{{ produit.description }}</p>
+  	        <a href="#" class="btn btn-primary">{{ produit.prix }} €</a> 
+  	        <a href="#" class="btn btn-secondary">Ajouter au panier</a> 
+           </div>
+        </div>       
+        {% endfor %}
+  	    <div class="col-xl-12"><a href="{{ path('app_produits_new') }}">Create new</a></div>
+      </div>
+  	</div>
+
+{% endblock %}
