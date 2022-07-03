@@ -3,13 +3,17 @@
 namespace App\Entity;
 
 use App\Repository\ProduitsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 
 #[ORM\Entity(repositoryClass: ProduitsRepository::class)]
 /**
+ * @ORM\Table(name="produits")
  * @Vich\Uploadable
  */
 class Produits
@@ -43,12 +47,31 @@ class Produits
 
     /**
      * @Vich\UploadableField(mapping="products_image", fileNameProperty="imageName")
-     * @var File
+     * @Assert\Image(maxSize="8M")
+     * @var File|null
      */
     private $imageFile;
 
+
     #[ORM\Column(type: 'string', length: 255)]
     private $imageName;
+
+
+    #[ORM\ManyToOne(targetEntity: Users::class, inversedBy: 'produits')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $userproduit;
+
+    #[ORM\ManyToOne(targetEntity: Categories::class, inversedBy: 'produits')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $category;
+
+    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: Order::class)]
+    private $orders;
+
+    public function __construct()
+    {
+        $this->orders = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -163,10 +186,67 @@ class Produits
         return $this->imageName;
     }
 
-    public function setImageName(string $imageName): self
+    public function setImageName(?string $imageName): self
     {
         $this->imageName = $imageName;
 
         return $this;
     }
+
+    public function getUserproduit(): ?Users
+    {
+        return $this->userproduit;
+    }
+
+    public function setUserproduit(?Users $userproduit): self
+    {
+        $this->userproduit = $userproduit;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Categories
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Categories $category): self
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): self
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders[] = $order;
+            $order->setProduit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): self
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getProduit() === $this) {
+                $order->setProduit(null);
+            }
+        }
+
+        return $this;
+    }
+
+    
+
 }

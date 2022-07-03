@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Categories;
 use App\Entity\Produits;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,15 +21,15 @@ class ProduitsType extends AbstractType
             'allow_delete' => true,
             'delete_label' => 'supprimer image',
             'download_uri' => false,
-            'imagine_pattern' => 'lataille_meduim',
+            'imagine_pattern' => 'lataille_medium'
         ] )
             ->add('titre')
             ->add('description')
             ->add('prix')
             ->add('quantite')
-            ->add('createdAt')
-            ->add('updatedAt')
-            
+            ->add('category', EntityType::class, [
+                'class' => Categories::class
+            ] )
         ;
     }
 

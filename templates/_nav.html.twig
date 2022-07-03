@@ -1,34 +1,54 @@
-  <nav class="navbar navbar-expand-sm navbar-light bg-light" aria-label="Third navbar example">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="{{ path('app_produits_index') }}">Boutique</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample03" aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light p-3">
+	<a class="navbar-brand" href="{{ path('app_produits_index') }}">Boutique</a>
+	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample03" aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
 
-      <div class="collapse navbar-collapse" id="navbarsExample03">
-        <ul class="navbar-nav me-auto mb-2 mb-sm-0">
-        {% if app.user %}
-          <li class="nav-item">
-            <a class="nav-link " href="#">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link " href="#">Profil</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link " href="{{ logout_url('main') }}">Logout</a>
-          </li>
-          {% else %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ path('app_login') }}">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ path('app_register') }}">Register</a>
-          </li>
-          {% endif %}
-        </ul>
-        <form>
-          <input class="form-control" type="text" placeholder="Search" aria-label="Search">
-        </form>
-      </div>
-    </div>
-  </nav>
+	<div class="collapse navbar-collapse justify-content-end" id="navbarsExample03">
+		<ul class="navbar-nav mb-2 mb-sm-0">
+
+			<li class="nav-item">
+				<a class="nav-link " href="#"></a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="{{ path('cart_index') }}">Panier <i class="bi bi-cart-plus"></i></a>
+			</li>
+
+
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-expanded="false">Mon compte</a>
+				<ul class="dropdown-menu" aria-labelledby="dropdown01">
+					{% if app.user %}
+						<li>
+							<a class="dropdown-item" href="{{ path('app_account') }}">Mon Profil</a>
+						</li>
+						<li>
+							<a class="dropdown-item" href="{{ path('app_produits_new') }}">Publier
+							</a>
+						</li>
+						<li>
+							<a class="dropdown-item" href="{{ path('payment_orders') }}">
+								Paiement</a>
+						</li>
+						<li>
+							<a class="dropdown-item" href="{{ logout_url('main') }}">Logout</a>
+						</li>
+					{% else %}
+						<li>
+							<a class="dropdown-item" href="{{ path('app_login') }}">
+								login</a>
+						</li>
+						<li>
+							<a class="dropdown-item" href="{{ path('app_register') }}">
+								Register</a>
+						</li>
+					{% endif %}
+				</ul>
+			</li>
+
+			
+
+
+		</ul>
+	</div>
+</nav>

@@ -2,11 +2,15 @@
 
 namespace App\Repository;
 
+use App\Data\SearchData;
 use App\Entity\Produits;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+
 
 /**
  * @method Produits|null find($id, $lockMode = null, $lockVersion = null)
@@ -16,9 +20,15 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ProduitsRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * @var PaginatorInterface
+     */
+    private $paginator;
+
+    public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, Produits::class);
+        $this->paginator = $paginator;
     }
 
     /**
@@ -43,6 +53,42 @@ class ProduitsRepository extends ServiceEntityRepository
         if ($flush) {
             $this->_em->flush();
         }
+    }
+    /**
+     * Récupère les produits en lien avec une recherche
+     * @return PaginationInterface
+     */
+    public function findSearch(SearchData $search): PaginationInterface
+    {
+        $query = $this
+            ->createQueryBuilder('p')
+            ->select('c', 'p')
+            ->join('p.category', 'c');
+
+            if(!empty($search->q)){
+                $query = $query
+                ->andWhere('p.titre LIKE :q')
+                ->setParameter('q', "%{$search->q}%");
+            }
+            if(!empty($search->min)){
+                $query = $query
+                ->andWhere('p.prix >= :min')
+                ->setParameter('min', $search->min);
+            }
+            if(!empty($search->max)){
+                $query = $query
+                ->andWhere('p.prix <= :max')
+                ->setParameter('max', $search->max);
+            }
+            if(!empty($search->categories)){
+                $query = $query
+                ->andWhere('c.id IN (:categories)')
+                ->setParameter('categories', $search->categories);
+            }
+
+        $query = $query->getQuery();
+        return $this->paginator->paginate($query, $search->page, 6);
+            
     }
 
     // /**

@@ -1,27 +1,98 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Produits index{% endblock %}
+{% block title %}Produits index
+{% endblock %}
 
 {% block body %}
-    
-    <div class="container">
-        <h1 class="mb-5 text-center">Produits</h1>
-  	  <div class="row">
-         {% for produit in produits %}
-  	    <div class="card col-md-4">
-          <a href="{{ path('app_produits_show', {'id': produit.id}) }}">
-           <img class="card-img-top" src="{{ produit.imageName ? vich_uploader_asset(produit) : 
-           asset('public/images/products/placeholder.jpg') | imagine_filter('lataille_medium')}}" alt="Card image cap"></a>
-  	      <div class="card-body">
-  	        <h5 class="card-title">{{ produit.titre }}</h5>
-  	        <p class="card-text">{{ produit.description }}</p>
-  	        <a href="#" class="btn btn-primary">{{ produit.prix }} €</a> 
-  	        <a href="#" class="btn btn-secondary">Ajouter au panier</a> 
-           </div>
-        </div>       
-        {% endfor %}
-  	    <div class="col-xl-12"><a href="{{ path('app_produits_new') }}">Create new</a></div>
-      </div>
-  	</div>
+
+	<!-- 	<div id="carouselExampleDark" class="carousel carousel-dark slide mb-5" data-bs-ride="carousel">
+			<div class="carousel-indicators">
+				<button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+				<button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+				<button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+			</div>
+			<div class="carousel-inner">
+				<div class="carousel-item active" data-bs-interval="10000">
+					<img src="{{ asset('images/products/chacha-bar-kinshasa-627ec480948e5549598485.jpg') }}" height="614px" width="100vmax" class="d-block w-100" alt="...">
+					<div class="carousel-caption d-none d-md-block">
+						<h5>First slide label</h5>
+						<p>Some representative placeholder content for the first slide.</p>
+					</div>
+				</div>
+				<div class="carousel-item" data-bs-interval="2000">
+					<img src="{{ asset('images/products/cornedbeefexeter-627c24f312980311596424.jpg') }}" height="614px" width="100vmax"  class="d-block w-100" alt="...">
+					<div class="carousel-caption d-none d-md-block">
+						<h5>Second slide label</h5>
+						<p>Some representative placeholder content for the second slide.</p>
+					</div>
+				</div>
+				<div class="carousel-item">
+					<img src="{{ asset('images/products/kinshasa768x512-6261990751a98843457554.jpg') }}" height="614px" width="100vmax"   class="d-block w-100" alt="...">
+					<div class="carousel-caption d-none d-md-block">
+						<h5>Third slide label</h5>
+						<p>Some representative placeholder content for the third slide.</p>
+					</div>
+				</div>
+			</div>
+			<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Previous</span>
+			</button>
+			<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Next</span>
+			</button>
+		</div> -->
+
+
+	<div class="container-fluid">
+		<div class="row row-mobutu">
+			<h2 class="text-center mb-4">The best of Product</h2>
+			<div class="col-md-3">
+				<div class="categories">
+					{% include 'produits/_filter.html.twig'with {form: form} only %}
+				</div>
+			</div>
+			<div class="col-md-7">
+				{% for row in produits|batch(3) %}
+					<div class="row">
+						{% for produit in row %}
+
+							<div class="cardproduit col-md-4 mb-3 ">
+								<div class="card bg-white rounted shadow">
+									<div class="w-100 rounted-top overflow-hidden">
+										<a href="{{ path('app_produits_show', {'id': produit.id}) }}">
+											<img class="card-img-top" src="{{ produit.imageName ? vich_uploader_asset(produit) : asset('public/images/products/placeholder.jpg') | imagine_filter('lataille_medium')}}" alt="Card image cap">
+										</a>
+									</div>
+									<div class="card-body">
+										<h6 class="card-title">{{ produit.titre }}</h6>
+										<p class="card-text">
+											<small>{{ produit.description }}</small>
+										</p>
+										<a href="#" class="btn btn-prix">{{ produit.prix }}
+											€</a>
+										<a href="{{path("cart_add", {id: produit.id})}}" class="btn btn-outline-primary">
+											<i class="bi bi-cart-plus"></i>
+										</a>
+									</div>
+								</div>
+							</div>
+							{% for c in produit.category %}
+								{{ c.name}}
+							{% endfor %}
+
+						{% endfor %}
+
+					</div>
+				{% endfor %}
+				<div class="mt-2">
+					{{ knp_pagination_render(produits) }}
+				</div>
+			</div>
+			<div class="col-md-2"></div>
+
+		</div>
+	</div>
 
 {% endblock %}

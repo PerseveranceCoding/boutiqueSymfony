@@ -1,0 +1,96 @@
+@import "~bootstrap";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Roboto:ital,wght@0,700;1,500&display=swap');
+/**
+         * The CSS shown here will not be introduced in the Quickstart guide, but shows
+         * how you can use CSS to style your Element's container.
+         */
+*{
+    font-family: 'Montserrat', sans-serif;
+    
+}
+body{
+    padding-top: 80px;
+}
+/*.bg-light{
+    background-color: transparent !important;
+}*/
+.navbar-nav .nav-item .nav-link{
+    color: blue;
+    font-weight: 500;
+}
+.navbar .navbar-brand{
+    color: red;
+    font-weight: bold;
+}
+
+.row-mobutu{
+    margin-top: 15px;
+    margin-bottom: 200px;
+}
+
+.card .card-img-top{
+    height: 360px;
+    transition: transform 0.3s ease-out;
+}
+.card .card-img-top:hover{
+    transform: scale(1.075);
+}
+
+.btn-prix{
+    color:dodgerblue;
+}
+small{
+    color: rgb(104, 95, 95);
+}
+.categories{
+    width: 60%;
+}
+.filter{
+    display: block;
+    position: sticky;
+    top: 20px;
+    bottom: 20px;
+}
+
+.img-thumbnail{
+    width: 220px;
+    height: 140px;
+}
+
+/**
+affichage champs carte bleu
+*/
+.StripeElement {
+    box-sizing: border-box;
+    height: 40px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: white;
+    box-shadow: 0 1px 3px 0 #e6ebf1;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+}
+
+.StripeElement--focus {
+    box-shadow: 0 1px 3px 0 #cfd7df;
+}
+
+.StripeElement--invalid {
+    border-color: #0A9B01;
+}
+
+.StripeElement--webkit-autofill {
+    background-color: #fefde5 !important;
+}
+
+#payment-form {
+    border: #F6F9FC solid 1px;
+    border-radius: var(--radius);
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 30px 50px -20px rgb(50 50 93 / 25%), 0 30px 60px -30px rgb(0 0 0 / 30%);
+  }
+
+  

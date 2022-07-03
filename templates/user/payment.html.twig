@@ -1,0 +1,132 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Payment{% endblock %}
+
+{% block body %}
+
+    <section class="features-icons bg-light text-center mt-5">
+        <div class="container">
+        
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <div class="card-body">
+                        <form id="payment-form" action="{{ path("subscription_paiement", {id: produit.id }) }}" method="post">
+                            <div class="form-row">
+                                <div id="payment-element"></div>
+                                <div id="card-errors" role="alert"></div>
+                            </div>
+                            <button class="btn btn-primary mt-4">
+                                Payer {{ produit.prix }} €
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
+                        <img class="img-thumbnail" src="{{ produit.imageName ? vich_uploader_asset(produit) : asset('public/images/products/placeholder.jpg') | imagine_filter('lataille_medium')}}" alt="Card image cap">
+
+                        <h3> {{ produit.titre }} </h3>
+                        <p>
+                            {{ produit.description }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+{% endblock %}
+
+{% block javascripts %}
+
+
+<script>
+document.addEventListener("DOMContentLoaded", async () =>{
+
+
+    {% if app_environement == 'dev' %}
+        var stripeToken = "{{ stripe_public_key_test }}";
+    {% else %}
+        var stripeToken = "{{ stripe_public_key_live }}";
+    {% endif %}
+   
+    var stripe = Stripe(stripeToken);
+    var element = stripe.elements({clientSecret: "{{intentSecret}}"});
+    var subscription = "{{ produit.id }}";
+    var clientSecret = "{{intentSecret}}";
+    var cardholderName = "{{ app.user.prenom}}";
+    var cardholderEmail = "{{ app.user.email }}";
+    var styleCustom = { base: { fontSize: '16px', color: "#32325d", } };
+   
+   // 3. fetch the clien secret
+   // const { clientSecret } = await fetch("/secret", {method: "POST"}).then(r => r.json())
+
+    // Monter notre form a l'objet Stripe
+    var card = element.create("card",);
+    card.mount("#payment-element");
+
+    //Message Error
+    card.addEventListener('change', function(event){
+    	var displayError = document.getElementById('card-errors');
+    	if(event.error) {
+		    displayError.textContent = event.error.message;
+        } else {
+		    displayError.textContent = '';
+        }
+    });
+    var form = document.getElementById('payment-form');
+    form.addEventListener("submit", async (event) => {
+    	event.preventDefault();
+
+        stripe.handleCardPayment(
+		    clientSecret,
+            card,
+            {
+            	payment_method_data: {
+		            billing_details: {
+		            	name: cardholderName,
+                        email: cardholderEmail
+                    }
+                }
+            }  
+        ).then((result) => {
+        	if(result.error) {
+        		// Display error
+            } else if('paymentIntent' in result) {
+        		console.log('Result : ',result);
+        		stripeTokenHandler(result.paymentIntent);
+		        console.log('Result paymentIntent : ',result.paymentIntent);
+            }
+        })
+    });
+     
+     function stripeTokenHandler(intent) {
+    	var form = document.getElementById('payment-form');
+    	var InputIntentId = document.createElement('input');
+    	var InputIntentPaymentMethod = document.createElement('input');
+	    var InputIntentStatus = document.createElement('input');
+	    var InputSubscription = document.createElement('input');
+	    InputIntentId.setAttribute('type', 'hidden');
+	    InputIntentId.setAttribute('name', 'stripeIntentId');
+	    InputIntentId.setAttribute('value', intent.id);
+	    InputIntentPaymentMethod.setAttribute('type', 'hidden');
+	    InputIntentPaymentMethod.setAttribute('name', 'stripeIntentPaymentMethod');
+	    InputIntentPaymentMethod.setAttribute('value', intent.payment_method);
+	    InputIntentStatus.setAttribute('type', 'hidden');
+	    InputIntentStatus.setAttribute('name', 'stripeIntentStatus');
+	    InputIntentStatus.setAttribute('value', intent.status);
+	    InputSubscription.setAttribute('type', 'hidden');
+	    InputSubscription.setAttribute('name', 'subscription');
+	    InputSubscription.setAttribute('value', subscription);
+	    form.appendChild(InputIntentId);
+	    form.appendChild(InputIntentPaymentMethod);
+	    form.appendChild(InputIntentStatus);
+	    form.appendChild(InputSubscription);
+	    form.submit();
+    }
+});
+   
+</script>
+
+{% endblock %}
+
